@@ -12,7 +12,7 @@ void gpio_pin_config(GPIO_TypeDef *port, gpio_pin_t pin, uint32_t mode)
      *   CRL covers pins 0–7, CRH covers pins 8–15.
      */
     volatile uint32_t *cr = (pin < 8) ? &port->CRL : &port->CRH;
-    uint32_t shift = ((uint32_t)pin % 8U) * 4U;
+    uint32_t shift = ((uint32_t)pin % 8U) * 4U;  /* 4 bits per pin field */
 
     REG_MODIFY(*cr, (0xFUL << shift), ((mode & 0xFUL) << shift));
 }
