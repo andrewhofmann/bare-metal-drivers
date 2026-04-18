@@ -10,8 +10,8 @@
  *   .isr_vector  → interrupt vector table (must start at flash origin)
  *   .text        → executable code
  *   .rodata      → read-only constants
- *   .data        → initialised variables (loaded from flash, copied to RAM)
- *   .bss         → zero-initialised variables (in RAM)
+ *   .data        → initialized variables (loaded from flash, copied to RAM)
+ *   .bss         → zero-initialized variables (in RAM)
  *   ._stack      → main stack pointer at top of RAM
  */
 
