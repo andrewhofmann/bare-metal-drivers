@@ -100,16 +100,102 @@ typedef struct {
 #define GPIOC   ((GPIO_TypeDef *)GPIOC_BASE)
 #define GPIOD   ((GPIO_TypeDef *)GPIOD_BASE)
 
-/* GPIO configuration modes (for CRL/CRH 4-bit fields) */
-#define GPIO_MODE_INPUT_ANALOG      0x0UL
-#define GPIO_MODE_INPUT_FLOATING    0x4UL
-#define GPIO_MODE_INPUT_PULL        0x8UL
-#define GPIO_MODE_OUTPUT_PP_2MHZ    0x2UL
-#define GPIO_MODE_OUTPUT_PP_10MHZ   0x1UL
-#define GPIO_MODE_OUTPUT_PP_50MHZ   0x3UL
-#define GPIO_MODE_OUTPUT_OD_2MHZ    0x6UL
-#define GPIO_MODE_AF_PP_50MHZ       0xBUL
-#define GPIO_MODE_AF_OD_50MHZ       0xFUL
+/* GPIO configuration modes (for CRL/CRH 4-bit fields)
+ *
+ * Each 4-bit field encodes CNF[1:0]:MODE[1:0]:
+ *   MODE = 00 (input), 01 (10 MHz), 10 (2 MHz), 11 (50 MHz)
+ *   CNF  = depends on input vs output, see reference manual §9.2
+ */
+/* Input modes (MODE = 00) */
+#define GPIO_MODE_INPUT_ANALOG      0x0UL   /* CNF=00: Analog input           */
+#define GPIO_MODE_INPUT_FLOATING    0x4UL   /* CNF=01: Floating input         */
+#define GPIO_MODE_INPUT_PULL        0x8UL   /* CNF=10: Pull-up / pull-down    */
+
+/* General-purpose output — push-pull */
+#define GPIO_MODE_OUTPUT_PP_2MHZ    0x2UL   /* CNF=00, MODE=10                */
+#define GPIO_MODE_OUTPUT_PP_10MHZ   0x1UL   /* CNF=00, MODE=01                */
+#define GPIO_MODE_OUTPUT_PP_50MHZ   0x3UL   /* CNF=00, MODE=11                */
+
+/* General-purpose output — open-drain */
+#define GPIO_MODE_OUTPUT_OD_2MHZ    0x6UL   /* CNF=01, MODE=10                */
+#define GPIO_MODE_OUTPUT_OD_10MHZ   0x5UL   /* CNF=01, MODE=01                */
+#define GPIO_MODE_OUTPUT_OD_50MHZ   0x7UL   /* CNF=01, MODE=11                */
+
+/* Alternate-function output — push-pull */
+#define GPIO_MODE_AF_PP_2MHZ        0xAUL   /* CNF=10, MODE=10                */
+#define GPIO_MODE_AF_PP_10MHZ       0x9UL   /* CNF=10, MODE=01                */
+#define GPIO_MODE_AF_PP_50MHZ       0xBUL   /* CNF=10, MODE=11                */
+
+/* Alternate-function output — open-drain */
+#define GPIO_MODE_AF_OD_2MHZ        0xEUL   /* CNF=11, MODE=10                */
+#define GPIO_MODE_AF_OD_10MHZ       0xDUL   /* CNF=11, MODE=01                */
+#define GPIO_MODE_AF_OD_50MHZ       0xFUL   /* CNF=11, MODE=11                */
+
+/* GPIO lock key (bit 16 of LCKR) */
+#define GPIO_LCKR_LCKK             (1UL << 16)
+
+/* ---------------------------------------------------------------------------
+ * AFIO — Alternate Function I/O
+ * ------------------------------------------------------------------------ */
+typedef struct {
+    volatile uint32_t EVCR;         /* 0x00: Event control               */
+    volatile uint32_t MAPR;         /* 0x04: Remap and debug config      */
+    volatile uint32_t EXTICR[4];    /* 0x08–0x14: EXTI line source sel.  */
+    volatile uint32_t RESERVED;     /* 0x18                              */
+    volatile uint32_t MAPR2;        /* 0x1C: Remap and debug config 2    */
+} AFIO_TypeDef;
+
+#define AFIO    ((AFIO_TypeDef *)AFIO_BASE)
+
+/* AFIO_EXTICR port selection values (4 bits per EXTI line) */
+#define AFIO_EXTICR_PA              0x0UL
+#define AFIO_EXTICR_PB              0x1UL
+#define AFIO_EXTICR_PC              0x2UL
+#define AFIO_EXTICR_PD              0x3UL
+
+/* ---------------------------------------------------------------------------
+ * EXTI — External Interrupt / Event Controller
+ * ------------------------------------------------------------------------ */
+#define EXTI_BASE       0x40010400UL
+
+typedef struct {
+    volatile uint32_t IMR;          /* 0x00: Interrupt mask               */
+    volatile uint32_t EMR;          /* 0x04: Event mask                   */
+    volatile uint32_t RTSR;         /* 0x08: Rising trigger selection     */
+    volatile uint32_t FTSR;         /* 0x0C: Falling trigger selection    */
+    volatile uint32_t SWIER;        /* 0x10: Software interrupt event     */
+    volatile uint32_t PR;           /* 0x14: Pending                      */
+} EXTI_TypeDef;
+
+#define EXTI    ((EXTI_TypeDef *)EXTI_BASE)
+
+/* ---------------------------------------------------------------------------
+ * NVIC — Nested Vectored Interrupt Controller (partial)
+ * ------------------------------------------------------------------------ */
+typedef struct {
+    volatile uint32_t ISER[8];      /* 0x000: Interrupt set-enable        */
+    uint32_t RESERVED0[24];
+    volatile uint32_t ICER[8];      /* 0x080: Interrupt clear-enable      */
+    uint32_t RESERVED1[24];
+    volatile uint32_t ISPR[8];      /* 0x100: Interrupt set-pending       */
+    uint32_t RESERVED2[24];
+    volatile uint32_t ICPR[8];      /* 0x180: Interrupt clear-pending     */
+    uint32_t RESERVED3[24];
+    volatile uint32_t IABR[8];      /* 0x200: Interrupt active bit        */
+    uint32_t RESERVED4[56];
+    volatile uint32_t IP[240];      /* 0x300: Interrupt priority (8-bit)  */
+} NVIC_TypeDef;
+
+#define NVIC    ((NVIC_TypeDef *)NVIC_BASE)
+
+/* EXTI IRQ numbers in the NVIC (STM32F103) */
+#define EXTI0_IRQn      6
+#define EXTI1_IRQn      7
+#define EXTI2_IRQn      8
+#define EXTI3_IRQn      9
+#define EXTI4_IRQn      10
+#define EXTI9_5_IRQn    23
+#define EXTI15_10_IRQn  40
 
 /* ---------------------------------------------------------------------------
  * SysTick — System Timer
