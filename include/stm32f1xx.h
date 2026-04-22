@@ -39,6 +39,9 @@
 #define TIM3_BASE       0x40000400UL
 #define TIM4_BASE       0x40000800UL
 
+/* AHB */
+#define DMA1_BASE       0x40020000UL
+
 /* Cortex-M3 system */
 #define SYSTICK_BASE    0xE000E010UL
 #define NVIC_BASE       0xE000E100UL
@@ -71,6 +74,9 @@ typedef struct {
 #define RCC_APB2ENR_USART1EN (1UL << 14)
 #define RCC_APB2ENR_SPI1EN  (1UL << 12)
 #define RCC_APB2ENR_TIM1EN  (1UL << 11)
+
+/* RCC_AHBENR bit positions */
+#define RCC_AHBENR_DMA1EN  (1UL << 0)
 
 /* RCC_APB1ENR bit positions */
 #define RCC_APB1ENR_USART2EN (1UL << 17)
@@ -168,6 +174,124 @@ typedef struct {
 } EXTI_TypeDef;
 
 #define EXTI    ((EXTI_TypeDef *)EXTI_BASE)
+
+/* ---------------------------------------------------------------------------
+ * USART — Universal Synchronous/Asynchronous Receiver/Transmitter
+ * ------------------------------------------------------------------------ */
+typedef struct {
+    volatile uint32_t SR;           /* 0x00: Status                      */
+    volatile uint32_t DR;           /* 0x04: Data                        */
+    volatile uint32_t BRR;          /* 0x08: Baud rate                   */
+    volatile uint32_t CR1;          /* 0x0C: Control 1                   */
+    volatile uint32_t CR2;          /* 0x10: Control 2                   */
+    volatile uint32_t CR3;          /* 0x14: Control 3                   */
+    volatile uint32_t GTPR;         /* 0x18: Guard time and prescaler    */
+} USART_TypeDef;
+
+#define USART1  ((USART_TypeDef *)USART1_BASE)
+#define USART2  ((USART_TypeDef *)USART2_BASE)
+#define USART3  ((USART_TypeDef *)USART3_BASE)
+
+/* USART_SR bit positions */
+#define USART_SR_PE         (1UL << 0)      /* Parity error              */
+#define USART_SR_FE         (1UL << 1)      /* Framing error             */
+#define USART_SR_NE         (1UL << 2)      /* Noise error               */
+#define USART_SR_ORE        (1UL << 3)      /* Overrun error             */
+#define USART_SR_IDLE       (1UL << 4)      /* IDLE line detected        */
+#define USART_SR_RXNE       (1UL << 5)      /* Read data register not empty */
+#define USART_SR_TC         (1UL << 6)      /* Transmission complete     */
+#define USART_SR_TXE        (1UL << 7)      /* Transmit data reg empty   */
+#define USART_SR_LBD        (1UL << 8)      /* LIN break detection       */
+#define USART_SR_CTS        (1UL << 9)      /* CTS flag                  */
+
+/* USART_CR1 bit positions */
+#define USART_CR1_SBK       (1UL << 0)      /* Send break                */
+#define USART_CR1_RWU       (1UL << 1)      /* Receiver wakeup           */
+#define USART_CR1_RE        (1UL << 2)      /* Receiver enable           */
+#define USART_CR1_TE        (1UL << 3)      /* Transmitter enable        */
+#define USART_CR1_IDLEIE    (1UL << 4)      /* IDLE interrupt enable     */
+#define USART_CR1_RXNEIE    (1UL << 5)      /* RXNE interrupt enable     */
+#define USART_CR1_TCIE      (1UL << 6)      /* TC interrupt enable       */
+#define USART_CR1_TXEIE     (1UL << 7)      /* TXE interrupt enable      */
+#define USART_CR1_PEIE      (1UL << 8)      /* PE interrupt enable       */
+#define USART_CR1_PS        (1UL << 9)      /* Parity selection (0=even) */
+#define USART_CR1_PCE       (1UL << 10)     /* Parity control enable     */
+#define USART_CR1_WAKE      (1UL << 11)     /* Wakeup method             */
+#define USART_CR1_M         (1UL << 12)     /* Word length (0=8, 1=9)    */
+#define USART_CR1_UE        (1UL << 13)     /* USART enable              */
+
+/* USART_CR2 bit positions */
+#define USART_CR2_STOP_MASK (3UL << 12)     /* STOP bits mask            */
+#define USART_CR2_STOP_1    (0UL << 12)     /* 1 stop bit                */
+#define USART_CR2_STOP_0_5  (1UL << 12)     /* 0.5 stop bits             */
+#define USART_CR2_STOP_2    (2UL << 12)     /* 2 stop bits               */
+#define USART_CR2_STOP_1_5  (3UL << 12)     /* 1.5 stop bits             */
+
+/* USART_CR3 bit positions */
+#define USART_CR3_EIE       (1UL << 0)      /* Error interrupt enable    */
+#define USART_CR3_DMAT      (1UL << 7)      /* DMA enable transmitter    */
+#define USART_CR3_DMAR      (1UL << 6)      /* DMA enable receiver       */
+
+/* ---------------------------------------------------------------------------
+ * DMA — Direct Memory Access Controller
+ * ------------------------------------------------------------------------ */
+
+/** Per-channel register block (7 channels on DMA1) */
+typedef struct {
+    volatile uint32_t CCR;          /* 0x00: Channel configuration       */
+    volatile uint32_t CNDTR;        /* 0x04: Number of data to transfer  */
+    volatile uint32_t CPAR;         /* 0x08: Peripheral address          */
+    volatile uint32_t CMAR;         /* 0x0C: Memory address              */
+    uint32_t RESERVED;              /* 0x10: (padding to 0x14 stride)    */
+} DMA_Channel_TypeDef;
+
+/** DMA controller registers */
+typedef struct {
+    volatile uint32_t ISR;          /* 0x00: Interrupt status            */
+    volatile uint32_t IFCR;         /* 0x04: Interrupt flag clear        */
+    DMA_Channel_TypeDef CH[7];      /* 0x08: Channels 1–7 (index 0–6)   */
+} DMA_TypeDef;
+
+#define DMA1    ((DMA_TypeDef *)DMA1_BASE)
+
+/* DMA_ISR / DMA_IFCR bit offsets per channel (ch = 0..6 for channels 1..7) */
+#define DMA_ISR_GIF(ch)     (1UL << ((ch) * 4 + 0))    /* Global interrupt  */
+#define DMA_ISR_TCIF(ch)    (1UL << ((ch) * 4 + 1))    /* Transfer complete */
+#define DMA_ISR_HTIF(ch)    (1UL << ((ch) * 4 + 2))    /* Half transfer     */
+#define DMA_ISR_TEIF(ch)    (1UL << ((ch) * 4 + 3))    /* Transfer error    */
+
+/* DMA_CCR bit positions */
+#define DMA_CCR_EN          (1UL << 0)      /* Channel enable            */
+#define DMA_CCR_TCIE        (1UL << 1)      /* Transfer complete IE      */
+#define DMA_CCR_HTIE        (1UL << 2)      /* Half transfer IE          */
+#define DMA_CCR_TEIE        (1UL << 3)      /* Transfer error IE         */
+#define DMA_CCR_DIR         (1UL << 4)      /* Direction (1=mem→periph)  */
+#define DMA_CCR_CIRC        (1UL << 5)      /* Circular mode             */
+#define DMA_CCR_PINC        (1UL << 6)      /* Peripheral increment      */
+#define DMA_CCR_MINC        (1UL << 7)      /* Memory increment          */
+#define DMA_CCR_PSIZE_MASK  (3UL << 8)      /* Peripheral data size      */
+#define DMA_CCR_PSIZE_8     (0UL << 8)      /* 8-bit peripheral          */
+#define DMA_CCR_MSIZE_MASK  (3UL << 10)     /* Memory data size          */
+#define DMA_CCR_MSIZE_8     (0UL << 10)     /* 8-bit memory              */
+#define DMA_CCR_PL_MASK     (3UL << 12)     /* Priority level            */
+#define DMA_CCR_PL_LOW      (0UL << 12)
+#define DMA_CCR_PL_MEDIUM   (1UL << 12)
+#define DMA_CCR_PL_HIGH     (2UL << 12)
+#define DMA_CCR_PL_VERY_HIGH (3UL << 12)
+
+/* USART NVIC IRQ numbers (STM32F103) */
+#define USART1_IRQn     37
+#define USART2_IRQn     38
+#define USART3_IRQn     39
+
+/* DMA1 channel NVIC IRQ numbers (STM32F103) */
+#define DMA1_Channel1_IRQn  11
+#define DMA1_Channel2_IRQn  12
+#define DMA1_Channel3_IRQn  13
+#define DMA1_Channel4_IRQn  14
+#define DMA1_Channel5_IRQn  15
+#define DMA1_Channel6_IRQn  16
+#define DMA1_Channel7_IRQn  17
 
 /* ---------------------------------------------------------------------------
  * NVIC — Nested Vectored Interrupt Controller (partial)
