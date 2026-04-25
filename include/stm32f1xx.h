@@ -337,6 +337,82 @@ typedef struct {
 #define SPI_SR_OVR          (1UL << 6)      /* Overrun flag              */
 #define SPI_SR_BSY          (1UL << 7)      /* Busy flag                 */
 
+/* ---------------------------------------------------------------------------
+ * I2C — Inter-Integrated Circuit Interface
+ * ------------------------------------------------------------------------ */
+typedef struct {
+    volatile uint32_t CR1;          /* 0x00: Control register 1          */
+    volatile uint32_t CR2;          /* 0x04: Control register 2          */
+    volatile uint32_t OAR1;         /* 0x08: Own address register 1      */
+    volatile uint32_t OAR2;         /* 0x0C: Own address register 2      */
+    volatile uint32_t DR;           /* 0x10: Data register               */
+    volatile uint32_t SR1;          /* 0x14: Status register 1           */
+    volatile uint32_t SR2;          /* 0x18: Status register 2           */
+    volatile uint32_t CCR;          /* 0x1C: Clock control register      */
+    volatile uint32_t TRISE;        /* 0x20: Rise time register          */
+} I2C_TypeDef;
+
+#define I2C1    ((I2C_TypeDef *)I2C1_BASE)
+#define I2C2    ((I2C_TypeDef *)I2C2_BASE)
+
+/* I2C_CR1 bit positions */
+#define I2C_CR1_PE          (1UL << 0)      /* Peripheral enable         */
+#define I2C_CR1_SMBUS       (1UL << 1)      /* SMBus mode                */
+#define I2C_CR1_SMBTYPE     (1UL << 3)      /* SMBus type                */
+#define I2C_CR1_ENARP       (1UL << 4)      /* ARP enable                */
+#define I2C_CR1_ENPEC       (1UL << 5)      /* PEC enable                */
+#define I2C_CR1_ENGC        (1UL << 6)      /* General call enable       */
+#define I2C_CR1_NOSTRETCH   (1UL << 7)      /* Clock stretching disable  */
+#define I2C_CR1_START       (1UL << 8)      /* Start generation          */
+#define I2C_CR1_STOP        (1UL << 9)      /* Stop generation           */
+#define I2C_CR1_ACK         (1UL << 10)     /* Acknowledge enable        */
+#define I2C_CR1_POS         (1UL << 11)     /* Ack/PEC position          */
+#define I2C_CR1_PEC         (1UL << 12)     /* Packet error checking     */
+#define I2C_CR1_ALERT       (1UL << 13)     /* SMBus alert               */
+#define I2C_CR1_SWRST       (1UL << 15)     /* Software reset            */
+
+/* I2C_CR2 bit positions */
+#define I2C_CR2_FREQ_MASK   (0x3FUL)        /* Peripheral clock freq MHz */
+#define I2C_CR2_ITERREN     (1UL << 8)      /* Error interrupt enable    */
+#define I2C_CR2_ITEVTEN     (1UL << 9)      /* Event interrupt enable    */
+#define I2C_CR2_ITBUFEN     (1UL << 10)     /* Buffer interrupt enable   */
+#define I2C_CR2_DMAEN       (1UL << 11)     /* DMA requests enable       */
+#define I2C_CR2_LAST        (1UL << 12)     /* DMA last transfer         */
+
+/* I2C_SR1 bit positions */
+#define I2C_SR1_SB          (1UL << 0)      /* Start bit (master)        */
+#define I2C_SR1_ADDR        (1UL << 1)      /* Address sent/matched      */
+#define I2C_SR1_BTF         (1UL << 2)      /* Byte transfer finished    */
+#define I2C_SR1_ADD10       (1UL << 3)      /* 10-bit header sent        */
+#define I2C_SR1_STOPF       (1UL << 4)      /* Stop detection (slave)    */
+#define I2C_SR1_RXNE        (1UL << 6)      /* Data register not empty   */
+#define I2C_SR1_TXE         (1UL << 7)      /* Data register empty       */
+#define I2C_SR1_BERR        (1UL << 8)      /* Bus error                 */
+#define I2C_SR1_ARLO        (1UL << 9)      /* Arbitration lost          */
+#define I2C_SR1_AF          (1UL << 10)     /* Acknowledge failure       */
+#define I2C_SR1_OVR         (1UL << 11)     /* Overrun/underrun          */
+#define I2C_SR1_PECERR      (1UL << 12)     /* PEC error in reception    */
+#define I2C_SR1_TIMEOUT     (1UL << 14)     /* Timeout or Tlow error     */
+#define I2C_SR1_SMBALERT    (1UL << 15)     /* SMBus alert               */
+
+/* I2C_SR2 bit positions */
+#define I2C_SR2_MSL         (1UL << 0)      /* Master/slave              */
+#define I2C_SR2_BUSY        (1UL << 1)      /* Bus busy                  */
+#define I2C_SR2_TRA         (1UL << 2)      /* Transmitter/receiver      */
+#define I2C_SR2_GENCALL     (1UL << 4)      /* General call address      */
+#define I2C_SR2_DUALF       (1UL << 7)      /* Dual flag                 */
+
+/* I2C_CCR bit positions */
+#define I2C_CCR_CCR_MASK    (0xFFFUL)       /* Clock control value       */
+#define I2C_CCR_DUTY        (1UL << 14)     /* Fast mode duty cycle      */
+#define I2C_CCR_FS          (1UL << 15)     /* Master mode selection     */
+
+/* I2C NVIC IRQ numbers (STM32F103) */
+#define I2C1_EV_IRQn    31
+#define I2C1_ER_IRQn    32
+#define I2C2_EV_IRQn    33
+#define I2C2_ER_IRQn    34
+
 /* SPI NVIC IRQ numbers (STM32F103) */
 #define SPI1_IRQn       35
 #define SPI2_IRQn       36
