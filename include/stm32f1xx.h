@@ -279,6 +279,68 @@ typedef struct {
 #define DMA_CCR_PL_HIGH     (2UL << 12)
 #define DMA_CCR_PL_VERY_HIGH (3UL << 12)
 
+/* ---------------------------------------------------------------------------
+ * SPI — Serial Peripheral Interface
+ * ------------------------------------------------------------------------ */
+typedef struct {
+    volatile uint32_t CR1;          /* 0x00: Control register 1          */
+    volatile uint32_t CR2;          /* 0x04: Control register 2          */
+    volatile uint32_t SR;           /* 0x08: Status register             */
+    volatile uint32_t DR;           /* 0x0C: Data register               */
+    volatile uint32_t CRCPR;        /* 0x10: CRC polynomial              */
+    volatile uint32_t RXCRCR;       /* 0x14: RX CRC                     */
+    volatile uint32_t TXCRCR;       /* 0x18: TX CRC                     */
+} SPI_TypeDef;
+
+#define SPI1    ((SPI_TypeDef *)SPI1_BASE)
+#define SPI2    ((SPI_TypeDef *)SPI2_BASE)
+
+/* SPI_CR1 bit positions */
+#define SPI_CR1_CPHA        (1UL << 0)      /* Clock phase               */
+#define SPI_CR1_CPOL        (1UL << 1)      /* Clock polarity            */
+#define SPI_CR1_MSTR        (1UL << 2)      /* Master selection          */
+#define SPI_CR1_BR_MASK     (7UL << 3)      /* Baud rate prescaler mask  */
+#define SPI_CR1_BR_DIV2     (0UL << 3)      /* f_pclk / 2               */
+#define SPI_CR1_BR_DIV4     (1UL << 3)      /* f_pclk / 4               */
+#define SPI_CR1_BR_DIV8     (2UL << 3)      /* f_pclk / 8               */
+#define SPI_CR1_BR_DIV16    (3UL << 3)      /* f_pclk / 16              */
+#define SPI_CR1_BR_DIV32    (4UL << 3)      /* f_pclk / 32              */
+#define SPI_CR1_BR_DIV64    (5UL << 3)      /* f_pclk / 64              */
+#define SPI_CR1_BR_DIV128   (6UL << 3)      /* f_pclk / 128             */
+#define SPI_CR1_BR_DIV256   (7UL << 3)      /* f_pclk / 256             */
+#define SPI_CR1_SPE         (1UL << 6)      /* SPI enable                */
+#define SPI_CR1_LSBFIRST    (1UL << 7)      /* Frame format (1=LSB first)*/
+#define SPI_CR1_SSI         (1UL << 8)      /* Internal slave select     */
+#define SPI_CR1_SSM         (1UL << 9)      /* Software slave management */
+#define SPI_CR1_RXONLY      (1UL << 10)     /* Receive only              */
+#define SPI_CR1_DFF         (1UL << 11)     /* Data frame format (1=16b) */
+#define SPI_CR1_CRCNEXT     (1UL << 12)     /* Transmit CRC next         */
+#define SPI_CR1_CRCEN       (1UL << 13)     /* CRC calculation enable    */
+#define SPI_CR1_BIDIOE      (1UL << 14)     /* Output enable in bidi     */
+#define SPI_CR1_BIDIMODE    (1UL << 15)     /* Bidirectional data mode   */
+
+/* SPI_CR2 bit positions */
+#define SPI_CR2_RXDMAEN     (1UL << 0)      /* RX buffer DMA enable      */
+#define SPI_CR2_TXDMAEN     (1UL << 1)      /* TX buffer DMA enable      */
+#define SPI_CR2_SSOE        (1UL << 2)      /* SS output enable          */
+#define SPI_CR2_ERRIE       (1UL << 5)      /* Error interrupt enable    */
+#define SPI_CR2_RXNEIE      (1UL << 6)      /* RX not empty IE           */
+#define SPI_CR2_TXEIE       (1UL << 7)      /* TX empty IE               */
+
+/* SPI_SR bit positions */
+#define SPI_SR_RXNE         (1UL << 0)      /* Receive buffer not empty  */
+#define SPI_SR_TXE          (1UL << 1)      /* Transmit buffer empty     */
+#define SPI_SR_CHSIDE       (1UL << 2)      /* Channel side              */
+#define SPI_SR_UDR          (1UL << 3)      /* Underrun flag             */
+#define SPI_SR_CRCERR       (1UL << 4)      /* CRC error flag            */
+#define SPI_SR_MODF         (1UL << 5)      /* Mode fault                */
+#define SPI_SR_OVR          (1UL << 6)      /* Overrun flag              */
+#define SPI_SR_BSY          (1UL << 7)      /* Busy flag                 */
+
+/* SPI NVIC IRQ numbers (STM32F103) */
+#define SPI1_IRQn       35
+#define SPI2_IRQn       36
+
 /* USART NVIC IRQ numbers (STM32F103) */
 #define USART1_IRQn     37
 #define USART2_IRQn     38
