@@ -271,13 +271,18 @@ typedef struct {
 #define DMA_CCR_MINC        (1UL << 7)      /* Memory increment          */
 #define DMA_CCR_PSIZE_MASK  (3UL << 8)      /* Peripheral data size      */
 #define DMA_CCR_PSIZE_8     (0UL << 8)      /* 8-bit peripheral          */
+#define DMA_CCR_PSIZE_16    (1UL << 8)      /* 16-bit peripheral         */
+#define DMA_CCR_PSIZE_32    (2UL << 8)      /* 32-bit peripheral         */
 #define DMA_CCR_MSIZE_MASK  (3UL << 10)     /* Memory data size          */
 #define DMA_CCR_MSIZE_8     (0UL << 10)     /* 8-bit memory              */
+#define DMA_CCR_MSIZE_16    (1UL << 10)     /* 16-bit memory             */
+#define DMA_CCR_MSIZE_32    (2UL << 10)     /* 32-bit memory             */
 #define DMA_CCR_PL_MASK     (3UL << 12)     /* Priority level            */
 #define DMA_CCR_PL_LOW      (0UL << 12)
 #define DMA_CCR_PL_MEDIUM   (1UL << 12)
 #define DMA_CCR_PL_HIGH     (2UL << 12)
 #define DMA_CCR_PL_VERY_HIGH (3UL << 12)
+#define DMA_CCR_MEM2MEM     (1UL << 14)     /* Memory-to-memory mode     */
 
 /* ---------------------------------------------------------------------------
  * SPI — Serial Peripheral Interface
